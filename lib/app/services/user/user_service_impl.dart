@@ -38,7 +38,7 @@ class UserServiceImpl implements UserService {
       }
     } on FirebaseException catch (e, s) {
       _log.error('Erro ao criar usuário no faribase', e, s);
-      throw Failere(message: 'Erro ao criar usuario');
+      throw Failere(message: 'Erro ao criar usuarios');
     }
   }
 }
