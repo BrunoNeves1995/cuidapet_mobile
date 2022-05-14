@@ -10,17 +10,20 @@ import 'package:cuidapet_mobile/app/mudules/core/auth/auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class CoreModule extends Module {
-
-   @override
-   final List<Bind> binds = [
-     Bind.lazySingleton((i) => AuthStore(), export: true),
-     Bind.lazySingleton<RestClient>((i) => DioRestClient(), export: true),
-     Bind.lazySingleton<AppLogger>((i) => LoggerAppLoggerImpl(), export: true),
-     Bind.lazySingleton<LocalStorage>((i) => SheredPreferencesLocalStorageImpl(), export:  true),
-     Bind.lazySingleton<LocalSecureStorage>((i) => LocalStorageFlutterSecureStorageImpl(), export:  true),
-
-   ];
-
-
-
+  @override
+  final List<Bind> binds = [
+    Bind.lazySingleton((i) => AuthStore(), export: true),
+    Bind.lazySingleton<AppLogger>((i) => LoggerAppLoggerImpl(), export: true),
+    Bind.lazySingleton<LocalStorage>((i) => SheredPreferencesLocalStorageImpl(),
+        export: true),
+    Bind.lazySingleton<LocalSecureStorage>(
+        (i) => LocalStorageFlutterSecureStorageImpl(),
+        export: true),
+    Bind.lazySingleton<RestClient>(
+        (i) => DioRestClient(
+              localStorage: i(),
+              log: i(),
+            ),
+        export: true),
+  ];
 }

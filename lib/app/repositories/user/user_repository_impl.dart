@@ -44,7 +44,6 @@ class UserRepositoryImpl implements UserRepository {
         "social_login": false,
         "supplier_user": false,
       });
-      print(result.data['access_token']);
       return result.data['access_token'];
     } on RestClientException catch (e, s) {
       // 403 -> usuario não encontrado

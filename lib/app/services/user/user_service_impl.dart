@@ -71,10 +71,6 @@ class UserServiceImpl implements UserService {
         }
         //! 2º fazer o login com backend
         final accessToken = await _userRepository.login(email, password);
-        await _saveAccessToken(accessToken);
-        final xx = await _localStorage
-            .read<String>(Constants.LOCAL_STORAGE_ACCESS_TOKEN_KEY);
-        print(xx);
       } else {
         throw Failere(
             message:

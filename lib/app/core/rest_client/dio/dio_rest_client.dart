@@ -1,5 +1,8 @@
 import 'package:cuidapet_mobile/app/core/helpers/constants.dart';
 import 'package:cuidapet_mobile/app/core/helpers/envirioments.dart';
+import 'package:cuidapet_mobile/app/core/local_storage/local_storage.dart';
+import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
+import 'package:cuidapet_mobile/app/core/rest_client/dio/interceptors/dio_interceptor.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/dio/rest_client_exception.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/rest_client.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/rest_client_response.dart';
@@ -21,23 +24,31 @@ class DioRestClient implements RestClient {
   DioRestClient({
     //! no construtor constumizamos defaultBaseOptions para que eu possa passar outro defaultBaseOptions que nao seja o meu
     BaseOptions? baseOptions,
+    required LocalStorage localStorage,
+    required AppLogger log,
   }) {
     //* associando o dio a variavel privada
-    _dio = Dio(baseOptions ?? _defaultBaseOptions);
+    _dio = Dio(
+      baseOptions ?? _defaultBaseOptions,
+    );
+    _dio.interceptors.addAll([
+      DioInterceptor(localStorage: localStorage, log: log),
+      LogInterceptor(requestBody: true, responseBody: true),
+    ]);
   }
 
   @override
   RestClient auth() {
     //! serve para informa para o Dio que nos vamos utilizar autenticação ou que nos não vamos usar uma autenticação
     //* enviando um parametro para dentro do Dio, onde nos possamos pegar ele  depois
-    _defaultBaseOptions.extra['auth_required'] = true;
+    _defaultBaseOptions.extra[Constants.REST_CLIENT_AUTH_REQUIRED_KEY] = true;
     return this;
   }
 
   @override
   RestClient unAuth() {
     //* enviando um parametro para dentro do Dio, onde nos possamos pegar ele  depois
-    _defaultBaseOptions.extra['auth_required'] = false;
+    _defaultBaseOptions.extra[Constants.REST_CLIENT_AUTH_REQUIRED_KEY] = false;
     return this;
   }
 
@@ -104,7 +115,6 @@ class DioRestClient implements RestClient {
         path,
         data: data,
         queryParameters: queryParamiters,
-        
         options: Options(headers: headers),
       );
       return _dioResponseConverter(response);
