@@ -96,6 +96,7 @@ class DioRestClient implements RestClient {
     try {
       final response = await _dio.patch(
         path,
+        data: data,
         queryParameters: queryParamiters,
         options: Options(headers: headers),
       );

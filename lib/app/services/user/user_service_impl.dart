@@ -12,14 +12,17 @@ class UserServiceImpl implements UserService {
   final UserRepository _userRepository;
   final AppLogger _log;
   final LocalStorage _localStorage;
+  final LocalSecureStorage _localSecureStorage;
 
   UserServiceImpl({
     required UserRepository userRepository,
     required AppLogger log,
     required LocalStorage localStorage,
+    required LocalSecureStorage localSecureStorage,
   })  : _log = log,
         _userRepository = userRepository,
-        _localStorage = localStorage;
+        _localStorage = localStorage,
+        _localSecureStorage = localSecureStorage;
 
   @override
   Future<void> register(String email, String password) async {
@@ -71,6 +74,8 @@ class UserServiceImpl implements UserService {
         }
         //! 2º fazer o login com backend
         final accessToken = await _userRepository.login(email, password);
+        await _saveAccessToken(accessToken);
+        await _confirmLogin();
       } else {
         throw Failere(
             message:
@@ -85,4 +90,13 @@ class UserServiceImpl implements UserService {
 
   Future<void> _saveAccessToken(String accessToken) => _localStorage
       .write<String>(Constants.LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+
+  Future<void> _confirmLogin() async {
+    final confirmLoginModel = await _userRepository.confirmLogin();
+    //! gravando nosso accessToken
+    await _saveAccessToken(confirmLoginModel.accessToken);
+    //! gravando nosso refleshToken
+    await _localSecureStorage.write(Constants.LOCAL_STORAGE_REFLESH_TOKEN_KEY,
+        confirmLoginModel.refleshToken);
+  }
 }

@@ -7,7 +7,7 @@
         {
             "name": "cuidapet_mobile",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
         },
         {
             "name": "cuidapet_mobile (profile mode)",

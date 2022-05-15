@@ -19,6 +19,7 @@ class AuthModule extends Module {
           log: i(), // esta no CoreModule
           userRepository: i(), // esta no AuthModule
           localStorage: i(), // esta no CoreModule
+          localSecureStorage: i(), // esta no CoreModule
         )),
   ];
 

@@ -8,7 +8,12 @@ class Constants {
       'rest_client_receive_timeout';
 
   static const LOCAL_STORAGE_ACCESS_TOKEN_KEY =
-      '/LOCAL_STORAGE_ACCESS_TOKEN_KEY';
+      '/LOCAL_STORAGE_ACCESS_TOKEN_KEY/';
+
+  
+  static const LOCAL_STORAGE_REFLESH_TOKEN_KEY =
+      '/LOCAL_STORAGE_REFLESH_TOKEN_KEY/';
 
   static const REST_CLIENT_AUTH_REQUIRED_KEY = 'auth_required';
+
 }
