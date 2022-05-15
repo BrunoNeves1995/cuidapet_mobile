@@ -6,6 +6,7 @@ import 'package:cuidapet_mobile/app/core/rest_client/rest_client.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/failere.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/user_exists_exceptions.dart';
 import 'package:cuidapet_mobile/app/models/confirm_login_model.dart';
+import 'package:cuidapet_mobile/app/models/user_model.dart';
 import 'package:cuidapet_mobile/app/repositories/user/user_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -64,7 +65,6 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<ConfirmLoginModel> confirmLogin() async {
-   
     try {
       final deviceToken = await FirebaseMessaging.instance.getToken();
 
@@ -79,6 +79,17 @@ class UserRepositoryImpl implements UserRepository {
     } on RestClientException catch (e, s) {
       _log.error('Erro ao confirma login', e, s);
       throw Failere(message: 'Erro ao confirma login');
+    }
+  }
+
+  @override
+  Future<UserModel> getUserLogged() async {
+    try {
+      final result = await _restClient.auth().get('/user/');
+      return UserModel.fromMap(result.data);
+    } on RestClientException catch (e, s) {
+      _log.error('Erro ao buscar dados do cliente logado', e, s);
+      throw Failere(message: 'Erro ao buscar dados do cliente logado');
     }
   }
 }

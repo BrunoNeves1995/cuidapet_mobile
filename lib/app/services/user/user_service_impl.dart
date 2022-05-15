@@ -76,6 +76,7 @@ class UserServiceImpl implements UserService {
         final accessToken = await _userRepository.login(email, password);
         await _saveAccessToken(accessToken);
         await _confirmLogin();
+        await _getUserData();
       } else {
         throw Failere(
             message:
@@ -96,7 +97,14 @@ class UserServiceImpl implements UserService {
     //! gravando nosso accessToken
     await _saveAccessToken(confirmLoginModel.accessToken);
     //! gravando nosso refleshToken
-    await _localSecureStorage.write(Constants.LOCAL_STORAGE_REFLESH_TOKEN_KEY,
+    await _localSecureStorage.write<String>(
+        Constants.LOCAL_STORAGE_REFLESH_TOKEN_KEY,
         confirmLoginModel.refleshToken);
+  }
+
+  Future<void> _getUserData() async {
+    final userModel = await _userRepository.getUserLogged();
+    //! gravndo os dados dentro do localStorage
+    await _localStorage.write<String>(Constants.LOCAL_STORAGE_USER_LOGGED_DATA, userModel.toJson());
   }
 }
