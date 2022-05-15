@@ -1,18 +1,23 @@
 import 'package:cuidapet_mobile/app/core/helpers/constants.dart';
+import 'package:cuidapet_mobile/app/mudules/core/auth/auth_store.dart';
 import 'package:dio/dio.dart';
 
 import 'package:cuidapet_mobile/app/core/local_storage/local_storage.dart';
 import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 //* quando extendo alguma cosia -> tenho a capacidade de sobrescrever os metodos
 class DioInterceptor extends Interceptor {
   final LocalStorage _localStorage;
   final AppLogger _log;
-  DioInterceptor({
-    required LocalStorage localStorage,
-    required AppLogger log,
-  })  : _localStorage = localStorage,
-        _log = log;
+  final AuthStore _authStore;
+  DioInterceptor(
+      {required LocalStorage localStorage,
+      required AppLogger log,
+      required AuthStore authStore})
+      : _localStorage = localStorage,
+        _log = log,
+        _authStore = authStore;
 
   //! onRequest -> é sempre executado antes de enviar nossa requisão la para dentro do backend antes de sair do nosso app
   @override
@@ -24,8 +29,8 @@ class DioInterceptor extends Interceptor {
     if (authRequerid) {
       final accessToken = await _localStorage
           .read<String>(Constants.LOCAL_STORAGE_ACCESS_TOKEN_KEY);
-      //! verificar aqui bruno -> || access_token.isEmpty - ta a mais
       if (accessToken == null) {
+        _authStore.logout();
         return handler.reject(
           DioError(
             requestOptions: options,

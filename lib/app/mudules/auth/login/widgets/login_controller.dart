@@ -2,6 +2,7 @@ import 'package:cuidapet_mobile/app/core/ui/exception/failere.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/user_not_exist_exceptions.dart';
 import 'package:cuidapet_mobile/app/core/ui/widgets/loader.dart';
 import 'package:cuidapet_mobile/app/mudules/auth/login/widgets/messages.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
 import 'package:cuidapet_mobile/app/services/user/user_service.dart';
@@ -24,6 +25,7 @@ abstract class _LoginControllerBase with Store {
       Loader.show();
       await _userService.login(login, password);
       Loader.hide();
+      Modular.to.navigate('/auth/');
     } on Failere catch (e, s) {
       final errorMessage = e.message ?? 'Erro ao realizar login';
       _log.error(errorMessage, e, s);

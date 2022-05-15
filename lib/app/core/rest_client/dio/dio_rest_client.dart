@@ -6,6 +6,7 @@ import 'package:cuidapet_mobile/app/core/rest_client/dio/interceptors/dio_interc
 import 'package:cuidapet_mobile/app/core/rest_client/dio/rest_client_exception.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/rest_client.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/rest_client_response.dart';
+import 'package:cuidapet_mobile/app/mudules/core/auth/auth_store.dart';
 import 'package:dio/dio.dart';
 
 class DioRestClient implements RestClient {
@@ -26,13 +27,14 @@ class DioRestClient implements RestClient {
     BaseOptions? baseOptions,
     required LocalStorage localStorage,
     required AppLogger log,
+    required AuthStore authStore
   }) {
     //* associando o dio a variavel privada
     _dio = Dio(
       baseOptions ?? _defaultBaseOptions,
     );
     _dio.interceptors.addAll([
-      DioInterceptor(localStorage: localStorage, log: log),
+      DioInterceptor(localStorage: localStorage, log: log , authStore: authStore),
       LogInterceptor(requestBody: true, responseBody: true),
     ]);
   }

@@ -105,6 +105,6 @@ class UserServiceImpl implements UserService {
   Future<void> _getUserData() async {
     final userModel = await _userRepository.getUserLogged();
     //! gravndo os dados dentro do localStorage
-    await _localStorage.write<String>(Constants.LOCAL_STORAGE_USER_LOGGED_DATA, userModel.toJson());
+    await _localStorage.write<String>(Constants.LOCAL_STORAGE_USER_LOGGED_DATA_KEY, userModel.toJson());
   }
 }

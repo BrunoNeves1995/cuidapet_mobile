@@ -14,7 +14,7 @@ class Constants {
   static const LOCAL_STORAGE_REFLESH_TOKEN_KEY =
       '/LOCAL_STORAGE_REFLESH_TOKEN_KEY/';
   
-  static const LOCAL_STORAGE_USER_LOGGED_DATA =
+  static const LOCAL_STORAGE_USER_LOGGED_DATA_KEY =
       '/LOCAL_STORAGE_USER_LOGGED_DATA/';
 
   static const REST_CLIENT_AUTH_REQUIRED_KEY = 'auth_required';
