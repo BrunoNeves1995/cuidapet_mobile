@@ -110,42 +110,51 @@ class UserServiceImpl implements UserService {
 
   Future<void> _getUserData() async {
     final userModel = await _userRepository.getUserLogged();
-    //! gravndo os dados dentro do localStorage
+    //! gravando os dados dentro do localStorage
     await _localStorage.write<String>(
         Constants.LOCAL_STORAGE_USER_LOGGED_DATA_KEY, userModel.toJson());
   }
 
   @override
   Future<void> socialLogin(SocialLoginType socialLoginType) async {
-    final SocialNetworkModel socialModel;
-    final AuthCredential authCredential;
-    final firebaseAuth = FirebaseAuth.instance;
+    try {
+      final SocialNetworkModel socialModel;
+      final AuthCredential authCredential;
+      final firebaseAuth = FirebaseAuth.instance;
 
-    switch (socialLoginType) {
-      case SocialLoginType.facebook:
-        throw Failere(message: 'Facebbok not implemented');
+      switch (socialLoginType) {
+        case SocialLoginType.facebook:
+          throw Failere(message: 'Facebbok not implemented');
 
-      case SocialLoginType.google:
-        socialModel = await _repositorySocial.gooleLogin();
-        authCredential = GoogleAuthProvider.credential(
-          accessToken: socialModel.accessToken,
-          idToken: socialModel.id,
-        );
-        break;
+        case SocialLoginType.google:
+          socialModel = await _repositorySocial.gooleLogin();
+          authCredential = GoogleAuthProvider.credential(
+            accessToken: socialModel.accessToken,
+            idToken: socialModel.id,
+          );
+          break;
+      }
+      final loginMethods =
+          await firebaseAuth.fetchSignInMethodsForEmail(socialModel.email);
+
+      final methodCheck = _getMethodSocialLoginType(socialLoginType);
+
+      // se o login não for nullo e o login nao conter google
+      if (loginMethods.isNotEmpty && !loginMethods.contains(methodCheck)) {
+        throw Failere(
+            message:
+                'Login não pode ser feito por $methodCheck, por favor utilize outro método');
+      }
+
+      await firebaseAuth.signInWithCredential(authCredential);
+      final accessToken = await _userRepository.socialSocial(socialModel);
+      await _saveAccessToken(accessToken);
+      await _confirmLogin();
+      await _getUserData();
+    } on FirebaseAuthException catch (e, s) {
+      _log.error('Erro ao realizar login com $socialLoginType', e, s);
+      Failere(message: 'Erro ao realizar login');
     }
-    final loginMethods =
-        await firebaseAuth.fetchSignInMethodsForEmail(socialModel.email);
-
-    final methodCheck = _getMethodSocialLoginType(socialLoginType);
-
-    // se o login não for nullo e o login nao conter google
-    if (loginMethods.isNotEmpty && !loginMethods.contains(methodCheck)) {
-      throw Failere(
-          message:
-              'Login não pode ser feito por $methodCheck, por favor utilize outro método');
-    }
-
-    await firebaseAuth.signInWithCredential(authCredential);
   }
 
   String _getMethodSocialLoginType(SocialLoginType socialLoginType) {

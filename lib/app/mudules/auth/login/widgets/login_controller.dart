@@ -44,6 +44,7 @@ abstract class _LoginControllerBase with Store {
     try {
       Loader.show();
       await _userService.socialLogin(socialLoginType);
+      Modular.to.pushNamed('/auth/');
       Loader.hide();
     } on Failere catch (e, s) {
       Loader.hide();

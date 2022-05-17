@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 
 import 'package:cuidapet_mobile/app/core/local_storage/local_storage.dart';
 import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 //* quando extendo alguma cosia -> tenho a capacidade de sobrescrever os metodos
 class DioInterceptor extends Interceptor {
