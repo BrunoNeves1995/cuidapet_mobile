@@ -1,6 +1,7 @@
 import 'package:cuidapet_mobile/app/core/ui/exception/failere.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/user_not_exist_exceptions.dart';
 import 'package:cuidapet_mobile/app/core/ui/widgets/loader.dart';
+import 'package:cuidapet_mobile/app/models/social_login_type.dart';
 import 'package:cuidapet_mobile/app/mudules/auth/login/widgets/messages.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -36,6 +37,18 @@ abstract class _LoginControllerBase with Store {
       _log.error(errorMessage);
       Loader.hide();
       Messages.alert(errorMessage);
+    }
+  }
+
+  Future<void> socialLogin(SocialLoginType socialLoginType) async {
+    try {
+      Loader.show();
+      await _userService.socialLogin(socialLoginType);
+      Loader.hide();
+    } on Failere catch (e, s) {
+      Loader.hide();
+      _log.error('Erro ao realizar Login', e, s);
+      Messages.alert(e.message ?? 'Erro ao realizar login');
     }
   }
 }

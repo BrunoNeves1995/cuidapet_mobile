@@ -1,7 +1,8 @@
 part of '../login_page.dart';
 
 class _LoginRegisterButton extends StatelessWidget {
-  const _LoginRegisterButton({Key? key}) : super(key: key);
+  final controller = Modular.get<LoginController>();
+  _LoginRegisterButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class _LoginRegisterButton extends StatelessWidget {
             ),
             CuidapetDefaultIconButton(
               onPressed: () {
-                
+                controller.socialLogin(SocialLoginType.google);
               },
               color: const Color(0xFFE15031),
               icon: CuidapetIcons.google,

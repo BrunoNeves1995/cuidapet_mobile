@@ -4,6 +4,9 @@ import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/failere.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/user_exists_exceptions.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/user_not_exist_exceptions.dart';
+import 'package:cuidapet_mobile/app/models/social_login_type.dart';
+import 'package:cuidapet_mobile/app/models/social_network_model.dart';
+import 'package:cuidapet_mobile/app/repositories/social/repository_social.dart';
 import 'package:cuidapet_mobile/app/repositories/user/user_repository.dart';
 import 'package:cuidapet_mobile/app/services/user/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,16 +16,19 @@ class UserServiceImpl implements UserService {
   final AppLogger _log;
   final LocalStorage _localStorage;
   final LocalSecureStorage _localSecureStorage;
+  final RepositorySocial _repositorySocial;
 
   UserServiceImpl({
     required UserRepository userRepository,
     required AppLogger log,
     required LocalStorage localStorage,
     required LocalSecureStorage localSecureStorage,
+    required RepositorySocial repositorySocial,
   })  : _log = log,
         _userRepository = userRepository,
         _localStorage = localStorage,
-        _localSecureStorage = localSecureStorage;
+        _localSecureStorage = localSecureStorage,
+        _repositorySocial = repositorySocial;
 
   @override
   Future<void> register(String email, String password) async {
@@ -105,6 +111,49 @@ class UserServiceImpl implements UserService {
   Future<void> _getUserData() async {
     final userModel = await _userRepository.getUserLogged();
     //! gravndo os dados dentro do localStorage
-    await _localStorage.write<String>(Constants.LOCAL_STORAGE_USER_LOGGED_DATA_KEY, userModel.toJson());
+    await _localStorage.write<String>(
+        Constants.LOCAL_STORAGE_USER_LOGGED_DATA_KEY, userModel.toJson());
+  }
+
+  @override
+  Future<void> socialLogin(SocialLoginType socialLoginType) async {
+    final SocialNetworkModel socialModel;
+    final AuthCredential authCredential;
+    final firebaseAuth = FirebaseAuth.instance;
+
+    switch (socialLoginType) {
+      case SocialLoginType.facebook:
+        throw Failere(message: 'Facebbok not implemented');
+
+      case SocialLoginType.google:
+        socialModel = await _repositorySocial.gooleLogin();
+        authCredential = GoogleAuthProvider.credential(
+          accessToken: socialModel.accessToken,
+          idToken: socialModel.id,
+        );
+        break;
+    }
+    final loginMethods =
+        await firebaseAuth.fetchSignInMethodsForEmail(socialModel.email);
+
+    final methodCheck = _getMethodSocialLoginType(socialLoginType);
+
+    // se o login não for nullo e o login nao conter google
+    if (loginMethods.isNotEmpty && !loginMethods.contains(methodCheck)) {
+      throw Failere(
+          message:
+              'Login não pode ser feito por $methodCheck, por favor utilize outro método');
+    }
+
+    await firebaseAuth.signInWithCredential(authCredential);
+  }
+
+  String _getMethodSocialLoginType(SocialLoginType socialLoginType) {
+    switch (socialLoginType) {
+      case SocialLoginType.facebook:
+        return 'facebook.com';
+      case SocialLoginType.google:
+        return 'google.com';
+    }
   }
 }
