@@ -3,19 +3,17 @@ import 'package:cuidapet_mobile/app/mudules/core/auth/auth_store.dart';
 import 'package:dio/dio.dart';
 
 import 'package:cuidapet_mobile/app/core/local_storage/local_storage.dart';
-import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
-
 //* quando extendo alguma cosia -> tenho a capacidade de sobrescrever os metodos
 class DioInterceptor extends Interceptor {
   final LocalStorage _localStorage;
-  final AppLogger _log;
+
   final AuthStore _authStore;
   DioInterceptor(
       {required LocalStorage localStorage,
-      required AppLogger log,
+    
       required AuthStore authStore})
       : _localStorage = localStorage,
-        _log = log,
+       
         _authStore = authStore;
 
   //! onRequest -> é sempre executado antes de enviar nossa requisão la para dentro do backend antes de sair do nosso app
@@ -48,15 +46,5 @@ class DioInterceptor extends Interceptor {
     handler.next(options);
   }
 
-  // //! vai ser executado antes de mandar para quem nos chamou
-  // @override
-  // void onResponse(Response response, ResponseInterceptorHandler handler) {
-  //   super.onResponse(response, handler);
-  // }
-
-  // //! antes de disparar o erro, executa esse metodo primeiro
-  // @override
-  // void onError(DioError err, ErrorInterceptorHandler handler) {
-  //   super.onError(err, handler);
-  // }
+ 
 }

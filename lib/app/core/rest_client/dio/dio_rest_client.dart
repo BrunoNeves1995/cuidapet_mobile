@@ -2,6 +2,7 @@ import 'package:cuidapet_mobile/app/core/helpers/constants.dart';
 import 'package:cuidapet_mobile/app/core/helpers/envirioments.dart';
 import 'package:cuidapet_mobile/app/core/local_storage/local_storage.dart';
 import 'package:cuidapet_mobile/app/core/logger/app_logger.dart';
+import 'package:cuidapet_mobile/app/core/rest_client/dio/interceptors/auth_reflesh_token_interceptors.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/dio/interceptors/dio_interceptor.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/dio/rest_client_exception.dart';
 import 'package:cuidapet_mobile/app/core/rest_client/rest_client.dart';
@@ -22,19 +23,25 @@ class DioRestClient implements RestClient {
             '0'),
   );
 
-  DioRestClient({
-    //! no construtor constumizamos defaultBaseOptions para que eu possa passar outro defaultBaseOptions que nao seja o meu
-    BaseOptions? baseOptions,
-    required LocalStorage localStorage,
-    required AppLogger log,
-    required AuthStore authStore
-  }) {
+  DioRestClient(
+      {
+      //! no construtor constumizamos defaultBaseOptions para que eu possa passar outro defaultBaseOptions que nao seja o meu
+      BaseOptions? baseOptions,
+      required LocalStorage localStorage,
+      required LocalSecureStorage localSecureStorage,
+      required AppLogger log,
+      required AuthStore authStore}) {
     //* associando o dio a variavel privada
-    _dio = Dio(
-      baseOptions ?? _defaultBaseOptions,
-    );
+    _dio = Dio(baseOptions ?? _defaultBaseOptions);
     _dio.interceptors.addAll([
-      DioInterceptor(localStorage: localStorage, log: log , authStore: authStore),
+      DioInterceptor(localStorage: localStorage, authStore: authStore),
+      AuthRefleshTokenInterceptors(
+        authStore: authStore,
+        localStorage: localStorage,
+        localSecureStorage: localSecureStorage,
+        restClient: this,
+        log: log,
+      ),
       LogInterceptor(requestBody: true, responseBody: true),
     ]);
   }
@@ -157,7 +164,10 @@ class DioRestClient implements RestClient {
         path,
         data: data,
         queryParameters: queryParamiters,
-        options: Options(headers: headers, method: method),
+        options: Options(
+          headers: headers,
+          method: method,
+        ),
       );
       return _dioResponseConverter(response);
     } on DioError catch (e) {
@@ -181,9 +191,10 @@ class DioRestClient implements RestClient {
       message: response?.statusMessage,
       statusCode: response?.statusCode,
       response: RestClientResponse(
-          data: response?.data,
-          statusCode: response?.statusCode,
-          statusMessage: response?.statusMessage),
+        data: response?.data,
+        statusCode: response?.statusCode,
+        statusMessage: response?.statusMessage,
+      ),
     );
   }
 }
