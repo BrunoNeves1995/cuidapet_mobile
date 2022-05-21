@@ -7,12 +7,12 @@ class _RegisterForm extends StatefulWidget {
   State<_RegisterForm> createState() => _RegisterFormState();
 }
 
-//! acessando diretamente pelo ModularState, a classe register_controller e pegando a instancia de controller
-class _RegisterFormState
-    extends ModularState<_RegisterForm, RegisterController> {
+//! acessando diretamente pelo Modular.get, a classe register_controller e pegando a instancia de controller
+class _RegisterFormState extends State<_RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   final _loginEC = TextEditingController();
   final _passwordEC = TextEditingController();
+  final controller = Modular.get<RegisterController>();
 
   @override
   void dispose() {
@@ -63,7 +63,8 @@ class _RegisterFormState
               onPressed: () {
                 final formValid = _formKey.currentState?.validate() ?? false;
                 if (formValid) {
-                  controller.register(email: _loginEC.text, password: _passwordEC.text);
+                  controller.register(
+                      email: _loginEC.text, password: _passwordEC.text);
                 }
               },
               label: 'Cadastrar')
