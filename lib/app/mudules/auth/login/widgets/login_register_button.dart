@@ -17,7 +17,9 @@ class _LoginRegisterButton extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: [
             CuidapetDefaultIconButton(
-              onPressed: () {},
+              onPressed: () {
+                controller.socialLogin(SocialLoginType.facebook);
+              },
               color: const Color(0xFF4267B3),
               icon: CuidapetIcons.facebook,
               label: 'Facebook',
