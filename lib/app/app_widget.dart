@@ -15,12 +15,10 @@ class AppWidget extends StatelessWidget {
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
-      builder: (widget) => MaterialApp.router(
+      builder: (__, _) => MaterialApp.router(
         title: UiConfig.title,
         debugShowCheckedModeBanner: false,
-        builder: (context, child) {
-          return asuka.builder(context, child);
-        },
+        builder: asuka.builder,
         theme: UiConfig.theme,
         routeInformationParser: Modular.routeInformationParser,
         routerDelegate: Modular.routerDelegate,

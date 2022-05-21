@@ -1,5 +1,4 @@
 import 'package:cuidapet_mobile/app/core/helpers/constants.dart';
-import 'package:cuidapet_mobile/app/core/rest_client/dio/rest_client_exception.dart';
 import 'package:cuidapet_mobile/app/core/ui/exception/expire_token_execptions.dart';
 import 'package:dio/dio.dart';
 

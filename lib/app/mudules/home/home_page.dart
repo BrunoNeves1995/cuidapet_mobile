@@ -17,7 +17,7 @@ class _HomePageState extends PageLifeCycleState<HomeController, HomePage> {
   @override
   Map<String, dynamic>? get params => {'teste': 'teste life cycle'};
 
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +36,7 @@ class _HomePageState extends PageLifeCycleState<HomeController, HomePage> {
             onPressed: () async {
               final categoriesresponse =
                   await Modular.get<RestClient>().auth().get('/categories/');
-              print(categoriesresponse.data);
+              debugPrint(categoriesresponse.data);
             },
             child: const Text('teste reflesh token'),
           ),

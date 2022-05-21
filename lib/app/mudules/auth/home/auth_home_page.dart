@@ -30,7 +30,7 @@ class _AuthHomePageState extends State<AuthHomePage> {
     });
 
     //! addPostFrameCallback -> é escutando sempre no final quando nossa pagiana ja esta carregada
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget._authStore.loadUserLogged();
     });
   }
